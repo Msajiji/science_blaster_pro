@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>SCIENCE BLASTER PRO — DR. AZZAM</title>
+<style>
+:root{--accent:#27d9ff;--accent2:#8b5cff;--danger:#ff3d52;--gold:#ffd54a}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050814;font-family:Arial,Helvetica,sans-serif;color:#fff}
+#game{position:relative;width:100vw;height:100vh;overflow:hidden;background:#091327;touch-action:none}
+#world{position:absolute;inset:0;overflow:hidden;transition:background .6s}
+.layer{position:absolute;inset:0;pointer-events:none}
+#far{opacity:.6;background:radial-gradient(circle at 15% 20%,#fff8 0 2px,transparent 3px),radial-gradient(circle at 65% 14%,#fff6 0 2px,transparent 3px),radial-gradient(circle at 88% 32%,#fff8 0 1px,transparent 2px)}
+#mountains{bottom:18%;top:auto;height:60%;background:linear-gradient(145deg,transparent 0 15%,#15223d 16% 36%,transparent 37%),linear-gradient(35deg,transparent 0 22%,#1a2946 23% 48%,transparent 49%),linear-gradient(150deg,transparent 0 55%,#101c33 56% 78%,transparent 79%);clip-path:polygon(0 100%,0 45%,15% 62%,30% 20%,44% 65%,58% 30%,75% 68%,91% 18%,100% 52%,100% 100%)}
+#mist{background:radial-gradient(ellipse at 20% 85%,#fff2 0 12%,transparent 25%),radial-gradient(ellipse at 70% 70%,#fff1 0 10%,transparent 25%);animation:mist 8s ease-in-out infinite alternate}@keyframes mist{to{transform:translateX(5%)}}
+#ground{position:absolute;z-index:15;bottom:0;width:100%;height:19%;background:linear-gradient(#3a5265 0 12%,#14202a 13% 100%);border-top:5px solid var(--accent);box-shadow:0 -8px 25px #0008 inset}
+#ground:after{content:"";position:absolute;inset:18px 0 0;background:repeating-linear-gradient(115deg,#0002 0 18px,transparent 19px 42px)}
+.platform{position:absolute;z-index:20;height:30px;background:linear-gradient(#8796a0 0 22%,#34434d 23%);border:3px solid #12191f;border-radius:9px;box-shadow:0 8px 0 #091015,0 0 12px #0008}
+.p1{left:12%;bottom:35%;width:22%}.p2{left:44%;bottom:50%;width:20%}.p3{left:73%;bottom:34%;width:18%}
+.ladder{position:absolute;z-index:22;left:37%;bottom:19%;width:58px;height:33%;border-left:7px solid #b8783e;border-right:7px solid #b8783e;background:repeating-linear-gradient(to bottom,transparent 0 13px,#e2aa62 14px 20px,transparent 21px 34px);filter:drop-shadow(0 3px 1px #0008)}
+#hud{position:absolute;z-index:200;top:0;left:0;right:0;height:70px;display:flex;gap:8px;align-items:center;padding:8px;background:linear-gradient(90deg,#050914ee,#11182eee);border-bottom:2px solid var(--accent);box-shadow:0 3px 15px #0008}
+.badge{padding:8px 12px;border:1px solid color-mix(in srgb,var(--accent),#fff 20%);border-radius:12px;background:#0a1120d9;font-weight:800;font-size:14px;box-shadow:inset 0 0 12px #ffffff0b}
+#hud .spacer{flex:1}.barWrap{width:125px;height:11px;background:#35101a;border-radius:10px;overflow:hidden}.bar{height:100%;width:100%;background:linear-gradient(90deg,#ff3148,#ffd44c)}
+#mission{position:absolute;z-index:190;top:80px;left:50%;transform:translateX(-50%);padding:8px 16px;border:1px solid var(--gold);border-radius:20px;background:#080d1fd9;font-size:13px;font-weight:bold;white-space:nowrap}
+#player{position:absolute;z-index:60;left:6%;bottom:19%;width:82px;height:108px;filter:drop-shadow(0 8px 7px #0009)}
+#player .helmet{position:absolute;left:19px;top:1px;width:46px;height:43px;border-radius:50% 50% 45% 45%;background:linear-gradient(120deg,#f3f6ff,#8da3b8);border:4px solid #172231}
+#player .visor{position:absolute;left:27px;top:13px;width:31px;height:16px;border-radius:9px;background:linear-gradient(90deg,#173b58,#3ce5ff);box-shadow:inset 0 0 7px #fff9}
+#player .face{position:absolute;left:30px;top:26px;width:26px;height:12px;background:#a76d48;border-radius:0 0 12px 12px}
+#player .body{position:absolute;left:12px;top:42px;width:58px;height:53px;border-radius:18px 18px 12px 12px;background:linear-gradient(90deg,#2c4f85,#0d8dc2);border:4px solid #d6efff}
+#player .core{position:absolute;left:18px;top:10px;width:21px;height:21px;border:2px solid #fff;border-radius:50%;display:grid;place-items:center;color:#fff;background:#162f64;font-size:13px}
+#gun{position:absolute;left:56px;top:57px;width:55px;height:18px;border-radius:8px;background:linear-gradient(#e8ffff,#5aa5c4);border:4px solid #142636;transform-origin:left center;transition:.12s;box-shadow:0 0 12px #39dcff66}
+#gun:after{content:"";position:absolute;right:-10px;top:2px;width:10px;height:6px;background:#fff;border-radius:0 5px 5px 0}
+#player.aimUp #gun{transform:rotate(-55deg)}#player.aimDown #gun{transform:rotate(52deg)}
+#player.run{animation:run .18s infinite alternate}@keyframes run{to{transform:translateY(-3px)}}
+.qbox{position:absolute;z-index:50;width:66px;height:66px;border-radius:12px;border:4px solid #fff07a;background:linear-gradient(145deg,#ffcc2e,#d6381f 55%,#7d1421);display:grid;place-items:center;font-size:40px;font-weight:900;color:white;text-shadow:0 2px #611;box-shadow:0 0 18px #ff6b2c, inset 0 0 13px #fff6;animation:boxpulse 1.1s infinite alternate}
+.qbox:after{content:"SCIENCE";position:absolute;bottom:-16px;font-size:8px;letter-spacing:1px;background:#081120;border:1px solid #fff6;padding:2px 5px;border-radius:5px}
+.qbox.done{opacity:.2;filter:grayscale(1);animation:none}.q1{left:24%;bottom:22%}.q2{left:51%;bottom:54%}.q3{left:81%;bottom:38%}@keyframes boxpulse{to{transform:translateY(-5px);box-shadow:0 0 30px #ffe16a}}
+.enemy{position:absolute;z-index:48;width:62px;height:58px;animation:patrol 2s ease-in-out infinite alternate;filter:drop-shadow(0 5px 4px #0009)}
+.enemy .bot{position:absolute;inset:6px 4px;background:linear-gradient(#8fa4ad,#263844);border:3px solid #101820;border-radius:18px 18px 12px 12px}.enemy .eye{position:absolute;top:15px;width:10px;height:8px;background:#ff3b52;border-radius:50%;box-shadow:0 0 8px #ff3b52}.enemy .e1{left:15px}.enemy .e2{right:15px}.enemy .leg{position:absolute;bottom:0;width:8px;height:14px;background:#17232c}.enemy .l1{left:17px}.enemy .l2{right:17px}
+.enemy.dead{display:none}.enemy:after{content:attr(data-name);position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:9px;white-space:nowrap;background:#111a2a;border:1px solid var(--danger);padding:2px 5px;border-radius:6px}
+#e1{left:39%;bottom:20%}#e2{left:67%;bottom:42%}@keyframes patrol{to{transform:translateX(45px)}}
+.bullet{position:absolute;z-index:100;width:24px;height:9px;border-radius:9px;background:#f4ffff;box-shadow:0 0 8px #fff,0 0 22px var(--accent)}
+.explosion{position:absolute;z-index:150;font-size:54px;pointer-events:none;animation:boom .5s forwards}@keyframes boom{to{transform:scale(1.9) rotate(25deg);opacity:0}}
+#boss{display:none;position:absolute;z-index:70;right:7%;bottom:20%;width:105px;height:115px;filter:drop-shadow(0 8px 8px #000);animation:bossMove 1.4s infinite alternate}
+#boss .shell{position:absolute;inset:16px 7px 4px;background:linear-gradient(#b83d4d,#491425);border:5px solid #1b1118;border-radius:48% 48% 22% 22%}.bossEye{position:absolute;top:39px;width:16px;height:12px;background:#ffec58;border-radius:50%;box-shadow:0 0 12px #ffb000}.be1{left:27px}.be2{right:27px}.horn{position:absolute;top:5px;width:25px;height:30px;background:#6e6e78;border:4px solid #222;border-radius:12px}.h1{left:10px;transform:rotate(-25deg)}.h2{right:10px;transform:rotate(25deg)}
+@keyframes bossMove{to{transform:translate(-25px,-8px)}}#bossHud{display:none;position:absolute;z-index:205;right:12px;top:80px;width:min(290px,38vw);padding:9px;border:1px solid #ff4b58;border-radius:12px;background:#180a12e8}.hpWrap{height:12px;background:#3b1118;border-radius:9px;overflow:hidden;margin-top:6px}.hp{height:100%;width:100%;background:linear-gradient(90deg,#ff334a,#ffdc4f);transition:.2s}
+#crystal{display:none;position:absolute;z-index:500;right:6%;bottom:21%;width:58px;height:75px;cursor:pointer;clip-path:polygon(50% 0,100% 30%,78% 100%,22% 100%,0 30%);background:linear-gradient(135deg,#fff,#4de9ff 35%,#5c2fff 70%,#fff);filter:drop-shadow(0 0 18px var(--accent));animation:crystal 1s infinite alternate}@keyframes crystal{to{transform:translateY(-12px) scale(1.08)}}
+#controls{position:fixed;z-index:800;bottom:max(10px,env(safe-area-inset-bottom));left:10px;right:10px;display:flex;justify-content:space-between;pointer-events:none}.group{display:flex;gap:7px;align-items:end;pointer-events:auto}
+.btn{width:64px;height:64px;border-radius:50%;border:3px solid var(--accent);background:radial-gradient(circle at 35% 30%,#243a56,#07101d);color:#fff;font-size:24px;font-weight:bold;box-shadow:0 5px 0 #0008,0 0 15px #0ee3ff33;touch-action:none}.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #0008}#shoot{width:80px;height:80px;border-color:var(--gold);color:var(--gold);font-size:28px}
+.overlay{position:absolute;z-index:1000;inset:0;background:#02040ddd;display:none;align-items:center;justify-content:center;padding:18px}.card{width:min(94vw,700px);max-height:90vh;overflow:auto;padding:28px;border-radius:25px;border:2px solid var(--accent);background:linear-gradient(145deg,#132447,#070d1b);box-shadow:0 0 45px #000;text-align:center}.logo{font-size:clamp(28px,5vw,58px);font-weight:900;letter-spacing:2px;background:linear-gradient(90deg,#fff,var(--accent),var(--gold));-webkit-background-clip:text;color:transparent}.option{display:block;width:100%;padding:14px;margin:9px 0;border:2px solid #2c5477;border-radius:13px;background:#0b1728;color:white;font-size:16px;text-align:left}.option:hover{border-color:var(--accent);background:#10223a}.start{padding:15px 30px;border:0;border-radius:30px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;font-size:18px;font-weight:bold;cursor:pointer}
+#levelMap{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:18px 0}.levelDot{width:45px;height:45px;border-radius:50%;display:grid;place-items:center;border:2px solid #526277;background:#0b1424}.levelDot.active{border-color:var(--gold);box-shadow:0 0 15px var(--gold)}
+#rotate{display:none;position:fixed;z-index:5000;inset:0;background:#050814;align-items:center;justify-content:center;text-align:center;font-size:23px;padding:30px}
+@media(max-width:700px){#hud{height:60px;padding:5px}.badge{font-size:11px;padding:6px 8px}#mission{top:67px;font-size:10px;max-width:90vw;overflow:hidden;text-overflow:ellipsis}.btn{width:56px;height:56px;font-size:20px}#shoot{width:70px;height:70px}.barWrap{width:80px}}
+@media(orientation:portrait){#rotate{display:flex}}
+</style>
+</head>
+<body>
+<div id="rotate">📱 ↔️<br><br><b>Pusingkan telefon ke LANDSCAPE</b><br><small>Untuk pengalaman game terbaik</small></div>
+<div id="game">
+<div id="world"><div id="far" class="layer"></div><div id="mountains" class="layer"></div><div id="mist" class="layer"></div></div>
+<div id="ground"></div><div class="platform p1"></div><div class="platform p2"></div><div class="platform p3"></div><div class="ladder"></div>
+<div id="hud"><div class="badge">🧑‍🚀 DR. AZZAM</div><div class="badge" id="lives">❤️❤️❤️</div><div class="badge">⭐ <span id="score">0</span></div><div class="badge">📦 <span id="answered">0</span>/3</div><div class="spacer"></div><div class="badge" id="levelName">LEVEL 1</div></div>
+<div id="mission">🎯 TEMBAK SCIENCE BOX DAN JAWAB SOALAN!</div>
+<div class="qbox q1" data-i="0">?</div><div class="qbox q2" data-i="1">?</div><div class="qbox q3" data-i="2">?</div>
+<div class="enemy" id="e1" data-name="BOT 2 HP"><div class="bot"></div><div class="eye e1"></div><div class="eye e2"></div><div class="leg l1"></div><div class="leg l2"></div></div>
+<div class="enemy" id="e2" data-name="BOT 2 HP"><div class="bot"></div><div class="eye e1"></div><div class="eye e2"></div><div class="leg l1"></div><div class="leg l2"></div></div>
+<div id="boss"><div class="horn h1"></div><div class="horn h2"></div><div class="shell"></div><div class="bossEye be1"></div><div class="bossEye be2"></div></div>
+<div id="bossHud"><b>👑 FINAL BOSS</b><div class="hpWrap"><div class="hp" id="bossHp"></div></div></div><div id="crystal"></div>
+<div id="player"><div class="helmet"></div><div class="visor"></div><div class="face"></div><div class="body"><div class="core">⚛</div></div><div id="gun"></div></div>
+<div id="controls"><div class="group"><button class="btn" id="left">◀</button><button class="btn" id="right">▶</button></div><div class="group"><button class="btn" id="up">▲</button><button class="btn" id="down">▼</button><button class="btn" id="jump">⬆</button><button class="btn" id="shoot">🎯</button></div></div>
+
+<div class="overlay" id="menu" style="display:flex"><div class="card"><div class="logo">SCIENCE BLASTER PRO</div><h2>🧑‍🚀 DR. AZZAM — MISI SAINS TAHUN 4</h2><p>Game aksi pendidikan 5 Level • Platform • Tembakan • Kuiz • Boss Battle</p><div id="levelMap"></div><button class="start" id="startBtn">🚀 MULA MISI</button><p><small>⌨️ PC: A/D atau ←/→ bergerak • W/S atau ↑/↓ • Z lompat • SPACE/X tembak</small></p></div></div>
+<div class="overlay" id="quiz"><div class="card"><h2>🧪 SCIENCE CHALLENGE</h2><h3 id="qText"></h3><div id="opts"></div><p id="feedback"></p></div></div>
+<div class="overlay" id="complete"><div class="card"><div class="logo">LEVEL COMPLETE!</div><h2 id="completeTitle"></h2><h1 id="finalScore"></h1><button class="start" id="nextBtn">TERUSKAN ▶</button></div></div>
+<div class="overlay" id="victory"><div class="card"><div class="logo">🏆 MISI BERJAYA!</div><h2>DR. AZZAM TELAH MENAMATKAN 5 MISI SAINS</h2><h1 id="victoryScore"></h1><p>🌟 Tahniah! Anda telah menjadi <b>Science Blaster Champion!</b></p><button class="start" onclick="location.reload()">🔄 MAIN SEMULA</button></div></div>
+</div>
+<script>
+const levels=[
+{name:"🌳 LEVEL 1 — HUTAN SAINS",accent:"#32e875",accent2:"#0a8f7b",bg:"linear-gradient(#5cc5e9,#76d7a2 52%,#193f34)",mission:"🌳 MISI: Teroka Hutan Sains — Kuasai Haiwan & Tumbuhan",qs:[
+["Apakah bahagian tumbuhan yang menyerap air?",["Daun","Akar","Bunga","Buah"],1,"Akar menyerap air dan garam mineral."],
+["Haiwan manakah bertelur?",["Kucing","Ayam","Lembu","Arnab"],1,"Ayam ialah haiwan yang bertelur."],
+["Apakah yang diperlukan tumbuhan untuk membuat makanan?",["Cahaya matahari","Batu","Plastik","Pasir sahaja"],0,"Tumbuhan menggunakan cahaya matahari untuk membuat makanan."]]},
+{name:"🌋 LEVEL 2 — GUNUNG BERAPI",accent:"#ff6b24",accent2:"#bd1e2d",bg:"linear-gradient(#30152b,#9b3034 52%,#e06b31)",mission:"🌋 MISI: Kuasai Sifat Bahan & Perubahan Bahan",qs:[
+["Antara berikut, bahan manakah menyerap air?",["Kaca","Span","Plastik","Logam"],1,"Span boleh menyerap air."],
+["Apakah berlaku apabila ais dipanaskan?",["Membeku","Mencair","Berkarat","Menjadi batu"],1,"Ais mencair apabila menerima haba."],
+["Yang manakah perubahan boleh balik?",["Kayu dibakar","Telur dimasak","Air menjadi ais","Kertas dibakar"],2,"Air boleh membeku dan ais boleh mencair semula."]]},
+{name:"🌊 LEVEL 3 — MAKMAL LAUT DALAM",accent:"#28dfff",accent2:"#145cc5",bg:"linear-gradient(#051a55,#0872a0 55%,#073b61)",mission:"🌊 MISI: Teroka Laut Dalam — Kenali Hidupan Air",qs:[
+["Haiwan manakah bernafas menggunakan insang?",["Ikan","Kucing","Burung","Kupu-kupu"],0,"Ikan menggunakan insang."],
+["Apakah fungsi akar pada tumbuhan?",["Menghasilkan bunyi","Menyerap air","Terbang","Memakan serangga"],1,"Akar menyerap air dan garam mineral."],
+["Haiwan manakah sesuai hidup di dalam air?",["Ikan","Harimau","Ayam","Kucing"],0,"Ikan mempunyai penyesuaian untuk hidup di dalam air."]]},
+{name:"⚡ LEVEL 4 — KOTA TENAGA",accent:"#ffd33f",accent2:"#b15b00",bg:"linear-gradient(#070a29,#183b91 52%,#2c1a4f)",mission:"⚡ MISI: Aktifkan Kota Tenaga — Kuasai Konsep Tenaga",qs:[
+["Apakah sumber tenaga utama di Bumi?",["Bulan","Matahari","Batu","Awan"],1,"Matahari ialah sumber tenaga utama."],
+["Apakah berlaku apabila elektrik digunakan pada mentol?",["Menghasilkan cahaya","Menjadi air","Membeku","Berkarat"],0,"Tenaga elektrik boleh ditukar kepada cahaya."],
+["Yang manakah menggunakan tenaga?",["Batu pegun","Kipas berpusing","Meja","Buku"],1,"Kipas memerlukan tenaga untuk bergerak."]]},
+{name:"🚀 LEVEL 5 — MAKMAL ANGKASA",accent:"#bd7cff",accent2:"#3c2bc7",bg:"linear-gradient(#01020d,#121653 50%,#2d1762)",mission:"🚀 MISI AKHIR: Selesaikan Cabaran Sains & Selamatkan Planet",qs:[
+["Apakah yang menyebabkan siang dan malam?",["Putaran Bumi","Bulan hilang","Hujan","Awan"],0,"Putaran Bumi menyebabkan perubahan siang dan malam."],
+["Kaedah sesuai untuk mengasingkan pasir daripada air?",["Penurasan","Pembakaran","Pembekuan sahaja","Menambah gula"],0,"Penurasan mengasingkan bahan tidak larut daripada air."],
+["KBAT: Mengapa tumbuhan penting dalam alam?",["Menyediakan makanan dan oksigen","Menjadikan haiwan tidur","Menghilangkan matahari","Menukar batu kepada air"],0,"Tumbuhan penting dalam rantaian makanan dan menghasilkan oksigen."]]}
+];
+let level=0,score=0,lives=3,x=6,y=0,aim="right",started=false,jumping=false,answered=0,bossHP=10,bossOn=false,currentBox=null,completed=false;
+const $=id=>document.getElementById(id),game=$("game"),player=$("player");
+function setupLevel(){
+ const L=levels[level];document.documentElement.style.setProperty("--accent",L.accent);document.documentElement.style.setProperty("--accent2",L.accent2);
+ $("world").style.background=L.bg;$("levelName").textContent=L.name;$("mission").textContent=L.mission;$("answered").textContent="0";answered=0;bossHP=10;bossOn=false;completed=false;x=6;y=0;
+ document.querySelectorAll(".qbox").forEach(b=>b.classList.remove("done"));document.querySelectorAll(".enemy").forEach((e,i)=>{e.classList.remove("dead");e.dataset.hp=2;e.dataset.name=(i===0?"SCOUT":"GUARD")+" 2 HP"});
+ $("boss").style.display="none";$("bossHud").style.display="none";$("crystal").style.display="none";update();
+}
+function update(){player.style.left=x+"%";player.style.bottom=(19+y)+"%";$("score").textContent=score;$("answered").textContent=answered;$("lives").textContent="❤️".repeat(lives)+"🖤".repeat(3-lives)}
+function move(d){if(!started)return;x=Math.max(1,Math.min(89,x+d*2.2));aim="right";player.className="run";setTimeout(()=>player.className="",120);update()}
+function nearLadder(){return x>34&&x<47}
+function vertical(d){if(!started)return;if(nearLadder()){y=Math.max(0,Math.min(30,y+d*3));update()}else{aim=d>0?"up":"down";player.className=d>0?"aimUp":"aimDown"}}
+function jump(){if(!started||jumping)return;jumping=true;let t=0,id=setInterval(()=>{t++;y=18*Math.sin(Math.min(Math.PI,t*Math.PI/12));update();if(t>=12){clearInterval(id);y=0;jumping=false;update()}},32)}
+function explosion(px,py){let e=document.createElement("div");e.className="explosion";e.textContent="💥";e.style.left=px+"%";e.style.bottom=py+"%";game.appendChild(e);setTimeout(()=>e.remove(),500)}
+function shoot(){
+ if(!started)return;let b=document.createElement("div");b.className="bullet";game.appendChild(b);let bx=x+8,by=24+y,dx=2.5,dy=0;if(aim==="up"){dx=1;dy=2.5}if(aim==="down"){dx=1.3;dy=-1.8}let n=0;
+ const timer=setInterval(()=>{n++;bx+=dx;by+=dy;b.style.left=bx+"%";b.style.bottom=by+"%";let br=b.getBoundingClientRect();
+ for(const box of document.querySelectorAll(".qbox:not(.done)")){let r=box.getBoundingClientRect();if(br.right>=r.left&&br.left<=r.right&&br.bottom>=r.top&&br.top<=r.bottom){clearInterval(timer);b.remove();explosion(bx,by);openQuiz(+box.dataset.i,box);return}}
+ for(const e of document.querySelectorAll(".enemy:not(.dead)")){let r=e.getBoundingClientRect();if(br.right>=r.left&&br.left<=r.right&&br.bottom>=r.top&&br.top<=r.bottom){clearInterval(timer);b.remove();explosion(bx,by);let hp=--e.dataset.hp;if(hp<=0){e.classList.add("dead");score+=150}else{e.dataset.name="HIT! "+hp+" HP";score+=50}update();return}}
+ if(bossOn){let r=$("boss").getBoundingClientRect();if(br.right>=r.left&&br.left<=r.right&&br.bottom>=r.top&&br.top<=r.bottom){clearInterval(timer);b.remove();explosion(bx,by);bossHP--;score+=20;$("bossHp").style.width=bossHP*10+"%";if(bossHP<=0){bossOn=false;$("boss").style.display="none";$("bossHud").style.display="none";score+=300;$("crystal").style.display="block";$("mission").textContent="💎 SENTUH KRISTAL UNTUK MENAMATKAN MISI!"}update();return}}
+ if(n>50||bx>105||by<0||by>100){clearInterval(timer);b.remove()}},16);
+}
+function openQuiz(i,box){started=false;currentBox=box;const q=levels[level].qs[i];$("qText").textContent=q[0];$("opts").innerHTML="";$("feedback").textContent="";
+ q[1].forEach((v,n)=>{let bt=document.createElement("button");bt.className="option";bt.textContent=String.fromCharCode(65+n)+". "+v;bt.onclick=()=>answer(n,q,i);$("opts").appendChild(bt)});$("quiz").style.display="flex"}
+function answer(n,q,i){const f=$("feedback");if(n===q[2]){score+=120;answered++;currentBox.classList.add("done");f.innerHTML="✅ BETUL! +120 MARKAH<br><small>"+q[3]+"</small>";f.style.color="#7dff9e"}else{score=Math.max(0,score-50);f.innerHTML="❌ SALAH! -50 MARKAH<br><small>"+q[3]+"</small>";f.style.color="#ff9ba5"}update();
+ setTimeout(()=>{$("quiz").style.display="none";if(answered===3&&bossHP===10){bossOn=true;$("boss").style.display="block";$("bossHud").style.display="block";$("mission").textContent="👑 BOSS BATTLE! TEWASKAN FINAL BOSS!"}started=true},1500)}
+$("crystal").addEventListener("pointerdown",e=>{e.preventDefault();collectCrystal()});$("crystal").onclick=collectCrystal;
+function collectCrystal(){if(completed||bossHP>0)return;completed=true;score+=500;update();started=false;$("crystal").style.display="none";$("completeTitle").textContent=levels[level].name;$("finalScore").textContent="⭐ SKOR: "+score;if(level===4){$("complete").style.display="none";$("victoryScore").textContent="🏆 SKOR AKHIR: "+score;$("victory").style.display="flex"}else{$("complete").style.display="flex"}}
+$("nextBtn").onclick=()=>{level++;$("complete").style.display="none";setupLevel();started=true};
+$("startBtn").onclick=()=>{$("menu").style.display="none";setupLevel();started=true};
+function hold(id,fn){let el=$(id),timer;el.addEventListener("pointerdown",e=>{e.preventDefault();fn();timer=setInterval(fn,70)});["pointerup","pointercancel","pointerleave"].forEach(ev=>el.addEventListener(ev,()=>clearInterval(timer)))}
+hold("left",()=>move(-1));hold("right",()=>move(1));$("up").addEventListener("pointerdown",e=>{e.preventDefault();vertical(1)});$("down").addEventListener("pointerdown",e=>{e.preventDefault();vertical(-1)});$("jump").onclick=jump;$("shoot").onclick=shoot;
+document.addEventListener("keydown",e=>{if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"," ","z","Z","x","X","a","A","d","D","w","W","s","S"].includes(e.key))e.preventDefault();if(e.repeat)return;
+ if(e.key==="ArrowLeft"||e.key.toLowerCase()==="a")move(-1);if(e.key==="ArrowRight"||e.key.toLowerCase()==="d")move(1);
+ if(e.key==="ArrowUp"||e.key.toLowerCase()==="w")vertical(1);if(e.key==="ArrowDown"||e.key.toLowerCase()==="s")vertical(-1);
+ if(e.key.toLowerCase()==="z")jump();if(e.key===" "||e.key.toLowerCase()==="x")shoot();
+});
+document.querySelectorAll(".qbox").forEach((b,i)=>b.dataset.i=i);
+const map=$("levelMap");levels.forEach((l,i)=>{let d=document.createElement("div");d.className="levelDot"+(i===0?" active":"");d.textContent=i+1;map.appendChild(d)});
+setupLevel();
+</script>
+</body></html>
